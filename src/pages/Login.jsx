@@ -1,18 +1,34 @@
-import { useState } from "react";
-import { login } from "../authService";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import {
+  Box,
+  Card,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  AppBar,
+  Toolbar,
+} from "@mui/material";
 
-function Login() {
+export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (auth.currentUser) navigate("/chat");
+  }, [navigate]);
+
+  const handleLogin = async e => {
     e.preventDefault();
     setError("");
     try {
-      await login(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       navigate("/chat");
     } catch (err) {
       setError(err.message);
@@ -20,17 +36,59 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </div>
+    <Box
+      sx={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        bgcolor: "grey.100",
+      }}
+    >
+      <Card sx={{ width: 400, p: 0, display: "flex", flexDirection: "column" }}>
+        {/* AppBar */}
+          <AppBar position="static" sx={{ mb: 3 }}>
+            <Toolbar variant="dense" sx={{ px: 0 }}>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                Login
+              </Typography>
+            </Toolbar>
+          </AppBar>
+
+        {/* Login form */}
+        <form onSubmit={handleLogin}>
+          <Stack spacing={2}>
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              fullWidth
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              fullWidth
+            />
+            {error && (
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            )}
+            <Button variant="contained" type="submit" fullWidth>
+              Login
+            </Button>
+            <Typography variant="body2" align="center">
+              Don’t have an account? <Link to="/register">Register</Link>
+            </Typography>
+          </Stack>
+        </form>
+      </Card>
+    </Box>
   );
 }
-
-export default Login;
