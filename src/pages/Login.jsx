@@ -27,6 +27,7 @@ export default function Login() {
   const handleLogin = async e => {
     e.preventDefault();
     setError("");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/chat");
@@ -46,15 +47,15 @@ export default function Login() {
         bgcolor: "grey.100",
       }}
     >
-      <Card sx={{ width: 400, p: 0, display: "flex", flexDirection: "column" }}>
+      <Card sx={{ width: 400, p: 4, display: "flex", flexDirection: "column" }}>
         {/* AppBar */}
-          <AppBar position="static" sx={{ mb: 3 }}>
-            <Toolbar variant="dense" sx={{ px: 0 }}>
-              <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                Login
-              </Typography>
-            </Toolbar>
-          </AppBar>
+        <AppBar position="static" sx={{ mb: 3 }}>
+          <Toolbar variant="dense" sx={{ px: 0 }}>
+            <Typography variant="h6" sx={{ flexGrow: 1 }}>
+              Login
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
         {/* Login form */}
         <form onSubmit={handleLogin}>
@@ -84,7 +85,7 @@ export default function Login() {
               Login
             </Button>
             <Typography variant="body2" align="center">
-              Don’t have an account? <Link to="/register">Register</Link>
+              Don't have an account? <Link to="/register">Register</Link>
             </Typography>
           </Stack>
         </form>
